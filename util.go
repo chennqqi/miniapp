@@ -13,6 +13,19 @@ import (
 	"time"
 )
 
+var (
+	_client = &http.Client{
+		Timeout: 10 * time.Second,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+)
+
+func UseCustomClient(client *http.Client) {
+	_client = client
+}
+
 // tokenAPI 获取带 token 的 API 地址
 func tokenAPI(api, token string) (string, error) {
 	queries := requestQueries{
@@ -140,12 +153,7 @@ func postForm(url, field, filename string, reader io.Reader, response interface{
 }
 
 func httpClient() *http.Client {
-	return &http.Client{
-		Timeout: 10 * time.Second,
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		},
-	}
+	return _client
 }
 
 // convert bool to int
